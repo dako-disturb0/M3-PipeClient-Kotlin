@@ -4,10 +4,11 @@
     "dockerfile": "Dockerfile"
   },
   "containerEnv": {
-    "ANDROID_HOME": "/opt/android-sdk"
+    "ANDROID_HOME": "/opt/android-sdk",
+    "KOTLIN_HOME": "/opt/kotlin"
   },
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/home/vscode/.sdkman/candidates/kotlin/current/bin"
+    "PATH": "${containerEnv:PATH}:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/kotlin/bin"
   },
   "customizations": {
     "vscode": {
