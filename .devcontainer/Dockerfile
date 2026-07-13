@@ -1,14 +1,15 @@
 FROM mcr.microsoft.com/devcontainers/java:17-bookworm
 
-# 1. Install dependencies esensial untuk Android SDK
+# 1. Install dependencies esensial untuk Android SDK & Kotlin
 RUN apt-get update && apt-get install -y wget unzip usbutils && rm -rf /var/lib/apt/lists/*
 
-# 2. Setup direktori Android SDK dengan kepemilikan user 'vscode'
-RUN mkdir -p /opt/android-sdk && chown -R vscode:vscode /opt/android-sdk
+# 2. Setup direktori Android SDK & Kotlin dengan kepemilikan user 'vscode'
+RUN mkdir -p /opt/android-sdk /opt/kotlin && chown -R vscode:vscode /opt/android-sdk /opt/kotlin
 
 USER vscode
 ENV ANDROID_HOME=/opt/android-sdk
-ENV PATH=${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools
+ENV KOTLIN_HOME=/opt/kotlin
+ENV PATH=${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${KOTLIN_HOME}/bin
 
 # 3. Download dan ekstrak Android Command Line Tools (Stable version)
 RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
@@ -23,5 +24,8 @@ RUN yes | sdkmanager --licenses \
                   "platforms;android-34" \
                   "build-tools;34.0.0"
 
-# 5. Install Kotlin Compiler secara permanen menggunakan SDKMAN! bawaan image
-RUN bash -c "source /home/vscode/.sdkman/bin/sdkman-init.sh && sdk install kotlin"
+# 5. Download dan install Kotlin Compiler secara manual (Gak pake SDKMAN! biar anti-gagal)
+RUN wget -q https://github.com/JetBrains/kotlin/releases/download/v2.1.0/kotlin-compiler-2.1.0.zip -O /tmp/kotlin.zip \
+    && unzip -q /tmp/kotlin.zip -d /tmp/kotlin-extracted \
+    && mv /tmp/kotlin-extracted/kotlinc/* /opt/kotlin/ \
+    && rm -rf /tmp/kotlin.zip /tmp/kotlin-extracted
